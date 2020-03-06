@@ -1,3 +1,8 @@
 def call(Map config = [:]) {
-  sh "gcloud app deploy"
+  when {
+    branch 'master'
+  }
+  steps {
+    sh 'gcloud app deploy'
+  }
 }
