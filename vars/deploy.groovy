@@ -1,6 +1,4 @@
-def call(Map config = [:]) {
-
-  steps {
-    sh 'gcloud app deploy'
-  }
+def call(Map config) {
+  echo "Deploying ..."
+  sh 'gcloud app deploy'
 }
