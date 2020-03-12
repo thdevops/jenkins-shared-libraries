@@ -1,4 +1,11 @@
 def call(Map params) {
+    // capture scm variables
+    def scmVars = checkout scm
+    String branch = scmVars.GIT_BRANCH
+
+    // or use the environment variable
+    branch = env.GIT_BRANCH
+    
     if (branch == "master") {
         echo "Deploying ..."
         withCredentials([usernamePassword(credentialsId: 'pcfdev_user', usernameVariable: 'username', passwordVariable: 'password')]) {
