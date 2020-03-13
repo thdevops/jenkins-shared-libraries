@@ -6,11 +6,11 @@ def call(Map params) {
 
     def path = pwd()
 
-    def xmlText = new XmlSlurper().parse(path + "/pom.xml")
+    def pom = new XmlSlurper().parse(path + "/pom.xml")
     //String artifactId = xmlText.project.artifactId
 
-    echo xmlText.name()
-    echo xmlText.project[0].artifactId[0].text()
+    echo pom.name()
+    echo pom.artifactId.text()
 
     if (branch == "master") {
         space = "Common Staging Space"
