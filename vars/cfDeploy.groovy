@@ -6,7 +6,7 @@ def call(Map params) {
 
     def path = pwd()
 
-    def pom = new XmlSlurper().parse(path + "/pom.xml")
+    def pom = new XmlParser().parse(path + "/pom.xml")
 
     String artifactId = pom.artifactId.text()
     String version = pom.version.text()
