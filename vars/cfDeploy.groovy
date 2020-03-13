@@ -9,7 +9,8 @@ def call(Map params) {
     def xmlText = new XmlSlurper().parse(path + "/pom.xml")
     //String artifactId = xmlText.project.artifactId
 
-    echo xmlText
+    echo xmlText.name()
+    echo xmlText.project[0].artifactId.text()
 
     if (branch == "master") {
         space = "Common Staging Space"
