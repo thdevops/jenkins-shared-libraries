@@ -18,17 +18,16 @@ def call(body) {
                 }
             }
 
-//            stage('Test') {
-//                steps {
-//                    unstash 'maven_build'
-//                    sh 'mvn verify'
-//                }
-//            }
+            stage('Test') {
+                steps {
+                    unstash 'maven_build'
+                    sh 'mvn verify'
+                }
+            }
 
             stage('Deploy') {
                 steps {
                     unstash 'maven_build'
-                    echo pipelineParams.space
                     cfDeploy(space: "${pipelineParams.space}")
                 }
             }

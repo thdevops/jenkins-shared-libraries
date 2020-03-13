@@ -16,7 +16,7 @@ def call(Map params) {
         space = "Common Staging Space"
     }
 
-    echo "Deploying ..."
+    echo "Deploying to ${space} ..."
     withCredentials([usernamePassword(credentialsId: 'pcfdev_user', usernameVariable: 'username', passwordVariable: 'password')]) {
         sh "CF_HOME=\$(pwd) cf login -a api.run.pivotal.io -u \"${username}\" -p \"${password}\" -o aurelien -s \"${space}\""
         sh "CF_HOME=\$(pwd) cf push thdevops-\${GIT_BRANCH} -p \"target/${artifactId}-${version}.${packaging}\""
