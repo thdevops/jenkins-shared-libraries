@@ -13,7 +13,7 @@ def call(Map params) {
     String packaging = pom.packaging.text()
 
     if (branch == "master") {
-        space = "Common Staging Space"
+        space = "Production"
     }
 
     echo "Deploying to ${space} ..."
