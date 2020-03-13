@@ -4,7 +4,9 @@ def call(Map params) {
 
     String space = params.space
 
-    def xmlText = new XmlSlurper().parse("pom.xml")
+    def path = build.getBuildVariables().get('WORKSPACE')
+
+    def xmlText = new XmlSlurper().parse(path + "/pom.xml")
     String artifactId = xmlText.project.artifactId
 
     echo artifactId
