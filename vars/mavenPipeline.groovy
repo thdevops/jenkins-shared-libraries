@@ -28,7 +28,7 @@ def call(body) {
             stage('Deploy') {
                 steps {
                     unstash 'maven_build'
-                    echo pipelineParams.space
+                    echo pipelineParams
                     cfDeploy(space: "${pipelineParams.space}")
                 }
             }
