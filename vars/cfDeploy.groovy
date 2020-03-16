@@ -13,12 +13,12 @@ def call(Map params) {
     String packaging = pom.packaging.text()
 
     if (branch == "master") {
-        space = "Production"
+        space = "th production"
     }
 
     echo "Deploying to ${space} ..."
     withCredentials([usernamePassword(credentialsId: 'pcfdev_user', usernameVariable: 'username', passwordVariable: 'password')]) {
-        sh "CF_HOME=\$(pwd) cf login -a api.run.pivotal.io -u \"${username}\" -p \"${password}\" -o aurelien -s \"${space}\""
-        sh "CF_HOME=\$(pwd) cf push thdevops-\${GIT_BRANCH} -p \"target/${artifactId}-${version}.${packaging}\""
+        sh "CF_HOME=\$(pwd) cf login -a api.run.pivotal.io -u \"${username}\" -p \"${password}\" -o renault-rcc -s \"${space}\""
+        sh "CF_HOME=\$(pwd) cf push thdevops-\${branch} -p \"target/${artifactId}-${version}.${packaging}\""
     }
 }
