@@ -21,7 +21,7 @@ def call(Map params) {
             spec: '''{
             "files": [
                 {
-                "pattern": "target/test.war",
+                "pattern": "target/*.war",
                 "target": "thales-devops"
                 }
             ]
