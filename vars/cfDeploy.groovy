@@ -18,14 +18,14 @@ def call(Map params) {
         // Upload in Artifactory
         rtUpload (
             serverId: 'artifactory-bcgplatinion',
-            spec: '''{
+            spec: """{
             "files": [
                 {
-                "pattern": "target/*.war",
+                "pattern": "target/${artifactId}-${version}.${packaging}",
                 "target": "thales-devops"
                 }
             ]
-            }'''
+            }"""
         )
     }
 
