@@ -14,6 +14,19 @@ def call(Map params) {
 
     if (branch == "master") {
         space = "th production"
+
+        // Upload in Artifactory
+        rtUpload (
+            serverId: 'artifactory-bcgplatinion',
+            specs: '''{
+            "files": [
+                {
+                "pattern": "target/${artifactId}-${version}.${packaging}",
+                "target": "thales-devops/artifacts"
+                }
+            ]
+            }'''
+        )
     }
 
     echo "Deploying to ${space} ..."
