@@ -18,7 +18,7 @@ def call(Map params) {
         // Upload in Artifactory
         rtUpload (
             serverId: 'artifactory-bcgplatinion',
-            specs: '''{
+            spec: '''{
             "files": [
                 {
                 "pattern": "target/${artifactId}-${version}.${packaging}",
