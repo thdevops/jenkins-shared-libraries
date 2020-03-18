@@ -1,9 +1,7 @@
 def call(Map params) {
 
-    sh "mvn build"
+    sh "mvn package"
 
     stash name: 'maven_build'
-
-
 
 }
