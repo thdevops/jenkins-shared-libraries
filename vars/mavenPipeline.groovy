@@ -13,13 +13,13 @@ def call(body) {
         stages {
             stage('Build') { 
                 steps {
-                    build()
+                    mvnBuild()
                 }
             }
 
             stage('Test') {
                 steps {
-                    test()
+                    mvnTest()
                 }
             }
 
