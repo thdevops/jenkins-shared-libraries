@@ -13,6 +13,7 @@ def call(Map params) {
     String packaging = pom.packaging.text()
 
     echo "${branch}"
+    echo "${branch ==~ /^release/}"
 
     if (branch ==~ /^release/) {
         space = "Common Staging Space"
