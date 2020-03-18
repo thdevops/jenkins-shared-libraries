@@ -12,6 +12,7 @@ def call(Map params) {
     String version = pom.version.text()
     String packaging = pom.packaging.text()
 
+    // Branch overriding when release/* or master
     if (branch ==~ /^release\/(.*)/) {
         space = "Common Staging Space"
     } else if (branch == "master") {

@@ -13,6 +13,8 @@ def call(Map params) {
     String version = pom.version.text()
     String packaging = pom.packaging.text()
 
+    String packageName = "${artifactId}-${version}.${packaging}"
+
     if (branch == "master") {
         // Upload in Artifactory
         rtUpload (
@@ -20,7 +22,7 @@ def call(Map params) {
             spec: """{
             "files": [
                 {
-                "pattern": "target/${artifactId}-${version}.${packaging}",
+                "pattern": "target/${packageName}",
                 "target": "thales-devops"
                 }
             ]
