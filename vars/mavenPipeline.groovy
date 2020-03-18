@@ -13,15 +13,13 @@ def call(body) {
         stages {
             stage('Build') { 
                 steps {
-                    sh 'mvn package' 
-                    stash name: 'maven_build'
+                    build()
                 }
             }
 
             stage('Test') {
                 steps {
-                    unstash 'maven_build'
-                    sh 'mvn verify'
+                    test()
                 }
             }
 
