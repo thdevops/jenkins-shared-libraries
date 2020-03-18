@@ -12,6 +12,8 @@ def call(Map params) {
     String version = pom.version.text()
     String packaging = pom.packaging.text()
 
+    echo "${branch}"
+
     if (branch ==~ /^release/) {
         space = "Common Staging Space"
     } else if (branch == "master") {
