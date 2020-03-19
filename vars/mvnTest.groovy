@@ -5,17 +5,18 @@ def call(Map params) {
     unstash 'maven_build'
     sh 'mvn verify'
 
-    def path = pwd()
+    if (branch ==~ /release\/(.*)/) {
 
-    def pom = new XmlParser().parse(path + "/pom.xml")
+        def path = pwd()
 
-    String artifactId = pom.artifactId.text()
-    String version = pom.version.text()
-    String packaging = pom.packaging.text()
+        def pom = new XmlParser().parse(path + "/pom.xml")
 
-    String packageName = "${artifactId}-${version}.${packaging}"
+        String artifactId = pom.artifactId.text()
+        String version = pom.version.text()
+        String packaging = pom.packaging.text()
 
-    if (branch == "master") {
+        String packageName = "${artifactId}-${version}.${packaging}"
+
         // Upload in Artifactory
         rtUpload (
             serverId: 'artifactory-bcgplatinion',
