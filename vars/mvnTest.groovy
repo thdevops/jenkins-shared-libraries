@@ -25,7 +25,7 @@ def call(Map params) {
                 {
                 "pattern": "target/${packageName}",
                 "target": "thales-devops",
-                "props": "appname=${artifactId};appversion=${version}"
+                "props": "app.name=${artifactId};app.version=${version}"
                 }
             ]
             }"""
