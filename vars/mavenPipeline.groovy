@@ -26,8 +26,7 @@ def call(body) {
             stage('Deploy') {
                 agent {
                     docker {
-                        image 'debian'
-                        args '-ti'
+                        image 'tenjaa/maven-cf'
                     }
                 }
                 steps {
