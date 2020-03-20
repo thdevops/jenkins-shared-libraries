@@ -33,6 +33,7 @@ def call(body) {
                 agent {
                     docker {
                         image 'debian'
+                        args '-u root'
                     }
                 }
                 steps {
