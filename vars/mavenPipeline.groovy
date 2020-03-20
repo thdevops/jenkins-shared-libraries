@@ -8,7 +8,6 @@ def call(body) {
         agent {
             docker {
                 image 'maven:3-jdk-8'
-                args '-u root'
             }
         }
         stages {
@@ -25,6 +24,11 @@ def call(body) {
             }
 
             stage('Deploy') {
+                agent {
+                    docker {
+                        image 'debian'
+                    }
+                }
                 steps {
                     unstash 'maven_build'
                     cfDeploy(space: "${pipelineParams.space}")
