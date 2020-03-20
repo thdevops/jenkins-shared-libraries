@@ -27,7 +27,7 @@ def call(body) {
                 agent {
                     docker {
                         image 'debian'
-                        args '--entrypoint=/bin/bash'
+                        args '--entrypoint=/bin/bash -dti'
                     }
                 }
                 steps {
