@@ -6,11 +6,8 @@ def call(body) {
 
     pipeline {
         agent {
-            // docker {
-            //     image 'tenjaa/maven-cf'
-            // }
-            dockerfile {
-                dir (libraryResource 'Dockerfile')
+            docker {
+                image 'maven:3-jdk-8'
             }
         }
         stages {
