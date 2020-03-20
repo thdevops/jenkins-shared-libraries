@@ -5,19 +5,25 @@ def call(body) {
     body()
 
     pipeline {
-        agent {
-            docker {
-                image 'maven:3-jdk-8'
-            }
-        }
+        agent any
         stages {
             stage('Build') { 
+                agent {
+                    docker {
+                        image 'maven:3-jdk-8'
+                    }
+                }
                 steps {
                     mvnBuild()
                 }
             }
 
             stage('Test') {
+                agent {
+                    docker {
+                        image 'maven:3-jdk-8'
+                    }
+                }
                 steps {
                     mvnTest()
                 }
@@ -26,7 +32,7 @@ def call(body) {
             stage('Deploy') {
                 agent {
                     docker {
-                        image 'tenjaa/maven-cf'
+                        image 'debian'
                     }
                 }
                 steps {
