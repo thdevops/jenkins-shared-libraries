@@ -10,7 +10,7 @@ def call(body) {
             //     image 'tenjaa/maven-cf'
             // }
             dockerfile {
-                dir libraryResource 'Dockerfile'
+                dir (libraryResource 'Dockerfile')
             }
         }
         stages {
