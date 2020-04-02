@@ -18,7 +18,7 @@ def call(Map params) {
         String packageName = "${artifactId}-${version}.${packaging}"
         String zipName = "${artifactId}-${version}.zip"
 
-        sh "su -c \"apt-get install -y zip\""
+        sh "apt-get install -y zip"
         sh "zip ${zipName} manifest.yml target/${packageName}"
 
         // Upload in Artifactory
