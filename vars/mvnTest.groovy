@@ -5,7 +5,7 @@ def call(Map params) {
     unstash 'maven_build'
     sh 'mvn verify'
 
-//    if (branch ==~ /release\/(.*)/) {
+    if (branch ==~ /release\/(.*)/) {
 
         def path = pwd()
 
@@ -33,5 +33,5 @@ def call(Map params) {
             ]
             }"""
         )
-//    }
+    }
 }
