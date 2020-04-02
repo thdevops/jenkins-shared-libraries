@@ -5,7 +5,7 @@ def call(Map params) {
     unstash 'maven_build'
     sh 'mvn verify'
 
-    if (branch ==~ /release\/(.*)/) {
+//    if (branch ==~ /release\/(.*)/) {
 
         def path = pwd()
 
@@ -16,6 +16,9 @@ def call(Map params) {
         String packaging = pom.packaging.text()
 
         String packageName = "${artifactId}-${version}.${packaging}"
+        String zipName = "${artifactId}-${version}.zip"
+
+        sh "zip ${zipName} manifest.yml target/${packageName}"
 
         // Upload in Artifactory
         rtUpload (
@@ -23,12 +26,12 @@ def call(Map params) {
             spec: """{
             "files": [
                 {
-                "pattern": "target/${packageName}",
+                "pattern": "${packageName}.zip",
                 "target": "thales-devops",
-                "props": "app.name=${artifactId};app.version=${version}"
+                "props": "app.name=${artifactId};app.version=${version};app.type=maven"
                 }
             ]
             }"""
         )
-    }
+//    }
 }
