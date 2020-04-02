@@ -16,10 +16,9 @@ def call(Map params) {
         String packaging = pom.packaging.text()
 
         String packageName = "${artifactId}-${version}.${packaging}"
-        String zipName = "${artifactId}-${version}.zip"
+        String zipName = "${artifactId}-${version}.tgz"
 
-        sh "apt-get update && apt-get install -y zip"
-        sh "zip ${zipName} manifest.yml target/${packageName}"
+        sh "tar czvf ${zipName} manifest.yml target/${packageName}"
 
         // Upload in Artifactory
         rtUpload (
@@ -27,7 +26,7 @@ def call(Map params) {
             spec: """{
             "files": [
                 {
-                "pattern": "${packageName}.zip",
+                "pattern": "${zipName}",
                 "target": "thales-devops",
                 "props": "app.name=${artifactId};app.version=${version};app.type=maven"
                 }
