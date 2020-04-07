@@ -30,5 +30,9 @@ apt-get install cf-cli
     withCredentials([usernamePassword(credentialsId: 'pcfdev_user', usernameVariable: 'username', passwordVariable: 'password')]) {
         sh "CF_HOME=\$(pwd) cf login -a api.run.pivotal.io -u \"${username}\" -p \"${password}\" -o thales-devops -s \"${space}\""
         sh "CF_HOME=\$(pwd) cf push ${artifactId}-\${GIT_BRANCH} -p \"target/${artifactId}-${version}.${packaging}\""
+
+        // Set endpoints suffix to "develop" to point to Common Staging Space
+        sh "CF_HOME=\$(pwd) cf set-env ${artifactId}-\${GIT_BRANCH} API_ENDPOINT_ENVIRONMENT develop"
+        sh "CF_HOME=\$(pwd) cf restage ${artifactId}-\${GIT_BRANCH}"
     }
 }
