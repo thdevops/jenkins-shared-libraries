@@ -32,7 +32,7 @@ apt-get install cf-cli
         sh "CF_HOME=\$(pwd) cf push ${artifactId}-\${GIT_BRANCH} -p \"target/${artifactId}-${version}.${packaging}\""
 
         // Set endpoints suffix to "develop" to point to Common Staging Space
-        sh "CF_HOME=\$(pwd) cf set-env ${artifactId}-\${GIT_BRANCH} API_ENDPOINT_ENVIRONMENT develop"
+        sh "CF_HOME=\$(pwd) cf set-env ${artifactId}-\${GIT_BRANCH} API_ENDPOINT_ENVIRONMENT master"
         sh "CF_HOME=\$(pwd) cf restage ${artifactId}-\${GIT_BRANCH}"
     }
 }
