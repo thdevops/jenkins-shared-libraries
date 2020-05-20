@@ -1,61 +1,63 @@
 def call(Map params) {
     def directory = (params.directory) ? params.directory : "."
 
-    dir (directory) {
-        def scmVars = checkout scm
-        String branch = scmVars.GIT_BRANCH
+    def args = (directory) ? "-pl :${directory}" : ""
 
-        unstash 'maven_build'
-        sh 'mvn verify'
+    def scmVars = checkout scm
+    String branch = scmVars.GIT_BRANCH
 
-        //if (branch ==~ /release\/(.*)/) {
-        if (branch == "master" || branch == "develop") {
-            def path = pwd()
+    unstash 'maven_build'
+    sh "mvn ${args} verify"
 
-            def xmlContent = readFile(path + "/pom.xml")
+    //if (branch ==~ /release\/(.*)/) {
+    if (branch == "master" || branch == "develop") {
+        def path = pwd()
 
-            def pom = new XmlParser().parseText(xmlContent)
+        def xmlContent = readFile(path + "/pom.xml")
 
-            String version = pom.version.text()
-            if (!version) version = pom.parent.version.text()
+        def pom = new XmlParser().parseText(xmlContent)
 
-            def endsWithSnapshot = version.endsWith("-SNAPSHOT")
-    /*
-            if ((branch == "master" && endsWithSnapshot == true) || (branch == "develop" && endsWithSnapshot == false)) {
-                // Bad version : snapshot on master, or release on develop. Crash the pipeline.
-                currentBuild.result = 'FAILURE'
-                error("Bad version ${version} for branch ${branch}")
-            }
-    */
-            sh 'mvn deploy'
-    /*
-            def path = pwd()
+        String version = pom.version.text()
+        if (!version) version = pom.parent.version.text()
 
-            def pom = new XmlParser().parse(path + "/pom.xml")
-
-            String artifactId = pom.artifactId.text()
-            String version = pom.version.text()
-            String packaging = pom.packaging.text()
-
-            String packageName = "${artifactId}-${version}.${packaging}"
-            String zipName = "${artifactId}-${version}.tgz"
-
-            sh "tar czvf ${zipName} manifest.yml target/${packageName}"
-
-            // Upload in Artifactory
-            rtUpload (
-                serverId: 'artifactory-bcgplatinion',
-                spec: """{
-                "files": [
-                    {
-                    "pattern": "${zipName}",
-                    "target": "thales-devops",
-                    "props": "app.name=${artifactId};app.version=${version};app.type=maven"
-                    }
-                ]
-                }"""
-            )
-            */
+        def endsWithSnapshot = version.endsWith("-SNAPSHOT")
+/*
+        if ((branch == "master" && endsWithSnapshot == true) || (branch == "develop" && endsWithSnapshot == false)) {
+            // Bad version : snapshot on master, or release on develop. Crash the pipeline.
+            currentBuild.result = 'FAILURE'
+            error("Bad version ${version} for branch ${branch}")
         }
+*/
+//        sh 'mvn deploy'
+
+        def path = pwd()
+
+        if (directory) path = path + "/" + directory
+
+        def pom = new XmlParser().parse(path + "/pom.xml")
+
+        String artifactId = pom.artifactId.text()
+        String version = pom.version.text()
+        String packaging = pom.packaging.text()
+
+        String packageName = "${artifactId}-${version}.${packaging}"
+        String zipName = "${artifactId}-${version}.tgz"
+
+        sh "tar czvf ${zipName} manifest.yml target/${packageName}"
+
+        // Upload in Artifactory
+        rtUpload (
+            serverId: 'artifactory-bcgplatinion',
+            spec: """{
+            "files": [
+                {
+                "pattern": "${zipName}",
+                "target": "thales-devops",
+                "props": "app.name=${artifactId};app.version=${version};app.type=maven"
+                }
+            ]
+            }"""
+        )
     }
+
 }
