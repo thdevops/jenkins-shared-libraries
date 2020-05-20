@@ -11,7 +11,7 @@ def call(Map params) {
 
     //if (branch ==~ /release\/(.*)/) {
     if (branch == "master" || branch == "develop") {
-        def path = pwd()
+/*        def path = pwd()
 
         def xmlContent = readFile(path + "/pom.xml")
 
@@ -20,7 +20,7 @@ def call(Map params) {
         String version = pom.version.text()
         if (!version) version = pom.parent.version.text()
 
-        def endsWithSnapshot = version.endsWith("-SNAPSHOT")
+        def endsWithSnapshot = version.endsWith("-SNAPSHOT")*/
 /*
         if ((branch == "master" && endsWithSnapshot == true) || (branch == "develop" && endsWithSnapshot == false)) {
             // Bad version : snapshot on master, or release on develop. Crash the pipeline.
