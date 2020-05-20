@@ -1,7 +1,11 @@
 def call(Map params) {
+    def directory = params.directory
 
-    sh 'mvn package'
+    def args = (directory) ? "-pl ${directory}" : ""
 
-    stash name: 'maven_build'
+    dir (directory) {
+        sh "mvn -B -DskipTests=true ${args} clean package"
 
+        stash name: 'maven_build'
+    }
 }

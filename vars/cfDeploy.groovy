@@ -1,38 +1,61 @@
 def call(Map params) {
-    def scmVars = checkout scm
-    String branch = scmVars.GIT_BRANCH
+    def directory = (params.directory) ? params.directory : "."
 
-    String space = params.space
+    dir (directory) {
 
-    def path = pwd()
+        def scmVars = checkout scm
+        String branch = scmVars.GIT_BRANCH
 
-    def pom = new XmlParser().parse(path + "/pom.xml")
+        def envVars = env.getEnvironment()
 
-    String artifactId = pom.artifactId.text()
-    String version = pom.version.text()
-    String packaging = pom.packaging.text()
+        String url = params.url
+        if (!url || url == "null")  url = envVars['DEFAULT_CF_URL']
+        String org = params.org
+        if (!org || org == "null") org = envVars['DEFAULT_CF_ORG']
+        String space = params.space
+        if (!space || space == "null") space = envVars['DEFAULT_CF_SPACE']
 
-    // Branch overriding when release/* or master
-    if (branch == "master") {
-        space = "Common Staging Space"
-    }
+        def path = pwd()
 
-    // Install CloudFoundry CLI
-    sh '''
-apt-get update && apt-get install -y wget gnupg
-wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | apt-key add -
-echo "deb https://packages.cloudfoundry.org/debian stable main" | tee /etc/apt/sources.list.d/cloudfoundry-cli.list
-apt-get update
-apt-get install cf-cli
-    '''
+    print(path)
 
-    echo "Deploying to ${space} ..."
-    withCredentials([usernamePassword(credentialsId: 'pcfdev_user', usernameVariable: 'username', passwordVariable: 'password')]) {
-        sh "CF_HOME=\$(pwd) cf login -a api.run.pivotal.io -u \"${username}\" -p \"${password}\" -o thales-devops -s \"${space}\""
-        sh "CF_HOME=\$(pwd) cf push ${artifactId}-\${GIT_BRANCH} -p \"target/${artifactId}-${version}.${packaging}\""
+        def xmlContent = readFile(path + "/pom.xml")
+    print xmlContent
+        def pom = new XmlParser().parseText(xmlContent)
+
+        String artifactId = pom.artifactId.text()
+        String version = pom.version.text()
+        String packaging = pom.packaging.text()
+
+        if (!version) version = pom.parent.version.text()
+
+        if (!packaging || packaging != "war") packaging = "jar"
+
+        def urlBranch = branch.replaceAll('/', '').toLowerCase()
+        def urlOrg = org.replaceAll('/', '').replaceAll(' ', '').toLowerCase()
+        def urlSpace = space.replaceAll('/', '').replaceAll(' ', '').toLowerCase()
+
+        def routeArgs = "-n ${artifactId}-${urlOrg}-${urlBranch} -d ${url}"
+
+        // Branch overriding when master
+        if (branch == "master") {
+            org = "cicd"
+            //space = "Common Staging Space"
+            space = "staging"
+
+            routeArgs = "-n ${artifactId}-${urlOrg}-staging -d ${url}"
+        }
+
+        def vars = "--var URL_SPACE=${urlSpace} --var URL_ORG=${urlOrg}  --var CF_SPACE=${space} --var CF_ORG=${org} --var BRANCH=${urlBranch} --var CF_URL=${url}"
+
+        echo "Deploying to ${space} ..."
+
+        sh "cf login --skip-ssl-validation -a api.${url} -u \"${env.DEFAULT_CF_USER}\" -p \"${env.DEFAULT_CF_PASSWD}\" -o \"${org}\" -s \"${space}\""
+        sh "cf push ${artifactId}-\${GIT_BRANCH} -p \"target/${artifactId}-${version}.${packaging}\" ${routeArgs} ${vars}"
 
         // Set endpoints suffix to "develop" to point to Common Staging Space
-        sh "CF_HOME=\$(pwd) cf set-env ${artifactId}-\${GIT_BRANCH} API_ENDPOINT_ENVIRONMENT master"
-        sh "CF_HOME=\$(pwd) cf restage ${artifactId}-\${GIT_BRANCH}"
+        sh "cf set-env ${artifactId}-\${GIT_BRANCH} API_ENDPOINT_ENVIRONMENT master"
+        sh "cf restage ${artifactId}-\${GIT_BRANCH}"
+
     }
 }

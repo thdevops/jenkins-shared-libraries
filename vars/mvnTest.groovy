@@ -1,37 +1,61 @@
 def call(Map params) {
-    def scmVars = checkout scm
-    String branch = scmVars.GIT_BRANCH
+    def directory = (params.directory) ? params.directory : "."
 
-    unstash 'maven_build'
-    sh 'mvn verify'
+    dir (directory) {
+        def scmVars = checkout scm
+        String branch = scmVars.GIT_BRANCH
 
-    if (branch ==~ /release\/(.*)/) {
+        unstash 'maven_build'
+        sh 'mvn verify'
 
-        def path = pwd()
+        //if (branch ==~ /release\/(.*)/) {
+        if (branch == "master" || branch == "develop") {
+            def path = pwd()
 
-        def pom = new XmlParser().parse(path + "/pom.xml")
+            def xmlContent = readFile(path + "/pom.xml")
 
-        String artifactId = pom.artifactId.text()
-        String version = pom.version.text()
-        String packaging = pom.packaging.text()
+            def pom = new XmlParser().parseText(xmlContent)
 
-        String packageName = "${artifactId}-${version}.${packaging}"
-        String zipName = "${artifactId}-${version}.tgz"
+            String version = pom.version.text()
+            if (!version) version = pom.parent.version.text()
 
-        sh "tar czvf ${zipName} manifest.yml target/${packageName}"
+            def endsWithSnapshot = version.endsWith("-SNAPSHOT")
+    /*
+            if ((branch == "master" && endsWithSnapshot == true) || (branch == "develop" && endsWithSnapshot == false)) {
+                // Bad version : snapshot on master, or release on develop. Crash the pipeline.
+                currentBuild.result = 'FAILURE'
+                error("Bad version ${version} for branch ${branch}")
+            }
+    */
+            sh 'mvn deploy'
+    /*
+            def path = pwd()
 
-        // Upload in Artifactory
-        rtUpload (
-            serverId: 'artifactory-bcgplatinion',
-            spec: """{
-            "files": [
-                {
-                "pattern": "${zipName}",
-                "target": "thales-devops",
-                "props": "app.name=${artifactId};app.version=${version};app.type=maven"
-                }
-            ]
-            }"""
-        )
+            def pom = new XmlParser().parse(path + "/pom.xml")
+
+            String artifactId = pom.artifactId.text()
+            String version = pom.version.text()
+            String packaging = pom.packaging.text()
+
+            String packageName = "${artifactId}-${version}.${packaging}"
+            String zipName = "${artifactId}-${version}.tgz"
+
+            sh "tar czvf ${zipName} manifest.yml target/${packageName}"
+
+            // Upload in Artifactory
+            rtUpload (
+                serverId: 'artifactory-bcgplatinion',
+                spec: """{
+                "files": [
+                    {
+                    "pattern": "${zipName}",
+                    "target": "thales-devops",
+                    "props": "app.name=${artifactId};app.version=${version};app.type=maven"
+                    }
+                ]
+                }"""
+            )
+            */
+        }
     }
 }
