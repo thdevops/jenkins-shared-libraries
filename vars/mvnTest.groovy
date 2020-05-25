@@ -7,6 +7,10 @@ def call(Map params) {
     String branch = scmVars.GIT_BRANCH
 
     unstash 'maven_build'
+
+    sh "pwd"
+    sh "ls -alh"
+
     sh "mvn ${args} verify"
 
     //if (branch ==~ /release\/(.*)/) {
