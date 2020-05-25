@@ -15,7 +15,7 @@ def call(Map params) {
     sh "mvn ${args} verify"
 
     //if (branch ==~ /release\/(.*)/) {
-    if (branch == "master" ) //|| branch == "develop") {
+    if (branch == "master" ) { //|| branch == "develop") {
 /*        def path = pwd()
 
         def xmlContent = readFile(path + "/pom.xml")
