@@ -10,6 +10,7 @@ def call(Map params) {
 
     sh "pwd"
     sh "ls -alh"
+    sh "cat pom.xml"
 
     sh "mvn ${args} verify"
 
